@@ -4,15 +4,30 @@ df1 <- read.csv("/Users/milicapajkic/Documents/GitHub/bootcamp_r/Data/DisasterDe
 df2 <- read.csv("/Users/milicapajkic/Documents/GitHub/bootcamp_r/Data/HousingAssistanceOwners.csv")
 str(df1)
 str(df2)
+df2$new_id <- paste(df2$disasterNumber, df2$county, sep = "")
 
-df_merge <- merge(df1,df2,by="id")
-df_merge3 <- na.omit(merge_1)
-merge_2 <- complete.cases(merge_1)
+
+###group by disasterid and county --> aggregate
+
+
+
+df_merge <- merge(df1,df2,by="disasterNumber")
+df_merge3 <- na.omit(df_merge)
+merge_2 <- complete.cases(df_merge)
+
+df1$designatedArea <- sub(" \\(County\\)", "", df1$designatedArea)
+df1$designatedArea <- sub(" \\(Parish\\)", "", df1$designatedArea)
+df1$designatedArea <- sub(" \\(Municipio\\)", "", df1$designatedArea)
+df1$designatedArea <- sub("\\(.*", "", df1$designatedArea)
+df1$designatedArea <- sapply(strsplit(df1$designatedArea, "\\("), function(x) x[1])
+df2$county <- sub("\\(.*", "", df2$county)
+
 
 areas_unique <- unique(df1$designatedArea)
+areas_unique
 
 #####################################try the wikipedia one
-install.packages('rvest')
+#install.packages('rvest')
 library(rvest)
 # Reading in the table from Wikipedia
 page = read_html("https://en.wikipedia.org/wiki/List_of_United_States_counties_by_per_capita_income")
