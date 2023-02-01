@@ -4,8 +4,6 @@ df1 <- read.csv("/Users/milicapajkic/Documents/GitHub/bootcamp_r/Data/DisasterDe
 df2 <- read.csv("/Users/milicapajkic/Documents/GitHub/bootcamp_r/Data/HousingAssistanceOwners.csv")
 str(df1)
 str(df2)
-df2$new_id <- paste(df2$disasterNumber, df2$county, sep = "")
-
 
 ###group by disasterid and county --> aggregate
 
@@ -22,9 +20,20 @@ df1$designatedArea <- sub("\\(.*", "", df1$designatedArea)
 df1$designatedArea <- sapply(strsplit(df1$designatedArea, "\\("), function(x) x[1])
 df2$county <- sub("\\(.*", "", df2$county)
 
-
 areas_unique <- unique(df1$designatedArea)
 areas_unique
+
+df1$new_id <- paste(df1$disasterNumber, df1$designatedArea, sep = "")
+df2$new_id <- paste(df2$disasterNumber, df2$county, sep = "")
+
+###group by disasterid and county --> aggregate
+grp_tbl <- df2 %>% group_by(new_id)
+grp_tbl
+
+# summarise on groupped data.
+agg_tbl <- grp_tbl %>% summarise_at(vars(validRegistrations, averageFemaInspectedDamage, totalInspected, totalApprovedIhpAmount, repairReplaceAmount, rentalAmount, otherNeedsAmount, totalMaxGrants), 
+                                    funs(sum))
+agg_tbl
 
 #####################################try the wikipedia one
 #install.packages('rvest')
@@ -41,4 +50,7 @@ names(x) = gsub("\\[.*","",my.table[,2])
 # Excluding non-states and averages from the table
 per.capita.income = x[!names(x) %in% c("United States", "Northern Mariana Islands", "Guam", "American Samoa", "Puerto Rico", "U.S. Virgin Islands")]
 
-
+str(df1)
+str(df2)
+str(my.table)
+str(agg_tbl)
