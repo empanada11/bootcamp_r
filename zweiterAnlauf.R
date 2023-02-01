@@ -37,6 +37,7 @@ UScounties$county <- sub("\\(.*", "", UScounties$county)
 str(df1)
 str(df2)
 
+#df2_unique <- df2 %>% distinct(disasterNumber,.keep_all = TRUE)
 
 # merge <- full_join(x = df1, y = df2, by = c('designatedArea' = 'county', 'disasterNumber' = 'disasterNumber'))
 # 
@@ -61,31 +62,36 @@ str(df2)
 
 
 
-merge_i <- inner_join(x = df1, y = df2, by = c('designatedArea' = 'county', 'disasterNumber' = 'disasterNumber'))
+merge_i <- inner_join(x = df1, y = df2, 
+                      by = c('designatedArea' = 'county', 'disasterNumber' = 'disasterNumber'))
 
 # row.has.na <- apply(merge_i, 1, function(x){any(is.na(x))})
 # final.filtered <- merge_i[!row.has.na,]
 
+#merge_i verkleinern
+merge_unique <- merge_i %>% distinct(disasterNumber,.keep_all = TRUE)
+merge_unique
+
 merge_i %>% 
-  select(designatedArea, zipCode) %>% 
+  select(designatedArea, zipCode, state.x) %>% 
   as_tibble()
 
 UScounties %>% 
-  select(county, county_ascii) %>% 
+  select(county, county_ascii, state_id) %>% 
   as_tibble()
 
 
 library(stringr)
 merge_i$designatedArea <- str_remove(string = merge_i$designatedArea, pattern = " +$")
-str_extract(string = , pattern = "")
+#str_extract(string = , pattern = "")
 
 ###left join
-merge_county <- left_join(x = merge_i, y = UScounties, by = c('designatedArea' = 'county', 'state_x' = 'state_name'))
+merge_county <- left_join(x = merge_unique, y = UScounties, by = c('designatedArea' = 'county', "state.x" = "state_id"))
 ###left join
-merge_capita <- left_join(x = merge_county, y = my.table, by = c('designatedArea' = 'county', 'state_name'))
+merge_capita <- left_join(x = merge_county, y = my.table, by = c('designatedArea' = 'county'))
 
 
 
-
-
+sum( is.na( merge_i ) ) > 0
+merge_i[rowSums(is.na(merge_i))==0,]
 
