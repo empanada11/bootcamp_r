@@ -95,3 +95,5 @@ merge_capita <- left_join(x = merge_county, y = my.table, by = c('designatedArea
 sum( is.na( merge_i ) ) > 0
 merge_i[rowSums(is.na(merge_i))==0,]
 
+#hets jetzt klappet?
+
